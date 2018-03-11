@@ -37,11 +37,9 @@ var PRICES = {
     'closet': 400,
     'внутри холодильника': 600,
     'внутри духовки': 500,
-    'мытьё посуды': 300,
     'внутри микроволновки': 300,
     'смена белья': 220,
     'уборка на балконе': 600, // за штуку
-    'глажка белья': 500,
     'уборка лотка питомца': 200, // за штуку
     'внутри кухонных шкафов': 400,
     'уборка в гардеробной': 500,
@@ -243,12 +241,12 @@ function set_scroll_down() {
     }, 500);
   });
   $("#prices button").click(function() {
-      rooms = $(this).data('name');
-      closets = 1;
-      $(".picker.rooms .value").text(ROOMS_DICT[rooms]);
-      $(".picker.closets .value").text(CLOSETS_DICT[closets]);
-      check_rooms_disabled();
-      check_closets_disabled();
+      // rooms = $(this).data('name');
+      // closets = 1;
+      // $(".picker.rooms .value").text(ROOMS_DICT[rooms]);
+      // $(".picker.closets .value").text(CLOSETS_DICT[closets]);
+      // check_rooms_disabled();
+      // check_closets_disabled();
     $('html, body').animate({
         scrollTop: $(".block.order").offset().top - 40
     }, 500);
