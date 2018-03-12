@@ -356,21 +356,21 @@
                             <div class="content">
                                 <div class="price"><span>от</span><span class="value">1650</span><span>руб.</span></div>
                                 <div class="descr">1-комнатная</div>
-                                <button data-name="1">Заказать</button>
+                                <button data-name="maintaining">Заказать</button>
                             </div>
                         </div>
                         <div class="item">
                             <div class="content">
                                 <div class="price"><span>от</span><span class="value">1890</span><span>руб.</span></div>
                                 <div class="descr">2-комнатная</div>
-                                <button data-name="2">Заказать</button>
+                                <button data-name="maintaining">Заказать</button>
                             </div>
                         </div>
                         <div class="item">
                             <div class="content">
                                 <div class="price"><span>от</span><span class="value">2370</span><span>руб.</span></div>
                                 <div class="descr">3-комнатная</div>
-                                <button data-name="3">Заказать</button>
+                                <button data-name="maintaining">Заказать</button>
                             </div>
                         </div>
                     </div>
@@ -382,21 +382,21 @@
                             <div class="content">
                                 <div class="price"><span>от</span><span class="value">3100</span><span>руб.</span></div>
                                 <div class="descr">1-комнатная</div>
-                                <button data-name="1">Заказать</button>
+                                <button data-name="general">Заказать</button>
                             </div>
                         </div>
                         <div class="item">
                             <div class="content">
                                 <div class="price"><span>от</span><span class="value">3900</span><span>руб.</span></div>
                                 <div class="descr">2-комнатная</div>
-                                <button data-name="2">Заказать</button>
+                                <button data-name="general">Заказать</button>
                             </div>
                         </div>
                         <div class="item">
                             <div class="content">
                                 <div class="price"><span>от</span><span class="value">4400</span><span>руб.</span></div>
                                 <div class="descr">3-комнатная</div>
-                                <button data-name="3">Заказать</button>
+                                <button data-name="general">Заказать</button>
                             </div>
                         </div>
                     </div>
@@ -487,11 +487,18 @@
                 <div class="note">вы также можете указать детали заказа:</div>
                 <div class="order_info">
                 <div class="pickers">
-                    <div class="picker rooms">
-                        <span class="minus disabled"></span>
-                        <div class="value">Кол-во комнат</div>
-                        <span class="plus"></span>
+                    <div class="type_picker">
+                        <div><label><input type="checkbox" name="maintaining"/><span>Поддерживающая уборка</span></label></div>
+                        <div><label><input type="checkbox" name="general"/><span>Генеральная уборка</span></label></div>
                     </div>
+                    <!--<div class="picker rooms">-->
+                        <!--<span class="minus disabled"></span>-->
+                        <!--<div class="value">Кол-во комнат</div>-->
+                        <!--<span class="plus"></span>-->
+                    <!--</div>-->
+                    <input type="text"
+                           oninput="square_listener(this.value)"
+                           name="square" placeholder="Площадь" />
                     <div class="picker closets">
                         <span class="minus disabled"></span>
                         <div class="value">Кол-во санузлов</div>

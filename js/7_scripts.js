@@ -27,13 +27,6 @@ var CLOSETS_DICT = {
     5: '5 санузлов'
 };
 var PRICES = {
-    'room': {
-        1: 1590,
-        2: 1990,
-        3: 2490,
-        4: 3190,
-        5: 3890
-    },
     'closet': 600,
     'внутри холодильника': 600,
     'внутри духовки': 600,
@@ -64,26 +57,36 @@ $(document).ready(function(){
     set_select_click_handler();
     set_how_we_work_left_right_buttons_listener();
     set_examples();
-    // set_dialog();
+    set_types_inputs();
 });
-// function set_dialog() {
-//     $("#dialog").dialog({
-//       autoOpen: false,
-//       draggable: false,
-//       show: {effect: "fade", duration: 800},
-//       buttons: [
-//         {
-//           text: "OK",
-//           click: function() {
-//             $(this).dialog("close");
-//           }
-//         }
-//       ]
-//     });
-//     setTimeout(function func() {
-//       $("#dialog").dialog("open");
-//     }, 1000);
-// }
+function square_listener(value) {
+    var int = parseInt(value);
+    if (isNaN(int)) {
+        $('input[name="square"]').val('');
+    } else {
+        $('input[name="square"]').val(int);
+    }
+    check_total();
+}
+function set_types_inputs() {
+    $('input[name="maintaining"]').prop('checked', true);
+    $('input[name="maintaining"]').change(function() {
+        if(this.checked) {
+            $('input[name="general"]').prop('checked', false);
+        } else {
+            $('input[name="general"]').prop('checked', true);
+        }
+        check_total();
+    });
+    $('input[name="general"]').change(function() {
+        if(this.checked) {
+            $('input[name="maintaining"]').prop('checked', false);
+        } else {
+            $('input[name="maintaining"]').prop('checked', true);
+        }
+        check_total();
+    });
+}
 var handler = onVisibilityChange($('#slider_buttons'), function(visible) {
     if (visible) {
         intervalID = setInterval(function() {
@@ -241,15 +244,18 @@ function set_scroll_down() {
     }, 500);
   });
   $("#prices button").click(function() {
-      // rooms = $(this).data('name');
-      // closets = 1;
-      // $(".picker.rooms .value").text(ROOMS_DICT[rooms]);
-      // $(".picker.closets .value").text(CLOSETS_DICT[closets]);
-      // check_rooms_disabled();
-      // check_closets_disabled();
-    $('html, body').animate({
-        scrollTop: $(".block.order").offset().top - 40
-    }, 500);
+      var type = $(this).data('name');
+      if (type === 'maintaining') {
+          $('input[name="maintaining"]').prop('checked', true);
+          $('input[name="general"]').prop('checked', false);
+      } else {
+          $('input[name="general"]').prop('checked', true);
+          $('input[name="maintaining"]').prop('checked', false);
+      }
+      $('html, body').animate({
+          scrollTop: $(".block.order").offset().top - 40
+      }, 500);
+      check_total();
   });
   $("#slide-out button").click(function() {
     $(".menu_mobile_icon").sideNav('hide');
@@ -317,17 +323,26 @@ function set_form_submit_listener() {
             $(this).find('button[type="submit"]').prop('disabled', false);
             return false;
         }
-
-		$.post(
-		    'https://script.google.com/macros/s/AKfycbxUQmB4xywU_aqtsjEwX2Y6TXTgg8gLQ78ecU1vWlQ5Wu7Frgk/exec',
-            {
+        var data;
+        if (extra_info) {
+            data = {
                 'имя': name,
                 'телефон': phone,
-                'комнаты': extra_info ? rooms : undefined,
+                'тип': $('input[name="maintaining"]').prop('checked') ? 'поддерживающая' : 'генеральная',
+                'площадь': extra_info ? parseInt($('input[name="square"]').val()) : undefined,
                 'санузлы': extra_info ? closets : undefined,
                 'доп. услуги': (extra_info && extra_services_list.length > 0) ? extra_services_list : undefined,
-                'сумма': extra_info ? total : undefined
-            }, function(){}
+                'сумма': extra_info ? total : undefined,
+            }
+        } else {
+            data = {
+                'имя': name,
+                'телефон': phone
+            }
+        }
+		$.post(
+		    'https://script.google.com/macros/s/AKfycbxUQmB4xywU_aqtsjEwX2Y6TXTgg8gLQ78ecU1vWlQ5Wu7Frgk/exec',
+            data, function(){}
 		);
         $(that).find('input[name="name"]').val('');
         $(that).find('input[name="phone"]').val('');
@@ -403,15 +418,70 @@ function set_picker_click_handler() {
   });
 }
 function check_total() {
-    if (closets === 0 || rooms === 0) {
+    var square = parseInt($('input[name="square"]').val());
+    if (isNaN(square) || square < 10 || square > 1000 || closets === 0) {
         extra_info = false;
         $(".total .variable, .total .currency").addClass('hidden');
+        return;
+    }
+    var square_price = get_square_price(square);
+    extra_info = true;
+    get_extra_services();
+    total = square_price + PRICES['closet'] * (closets - 1) + extra_services_sum;
+    $(".total .variable").text(total);
+    $(".total .variable, .total .currency").removeClass('hidden');
+}
+function get_square_price(square) {
+    if ($('input[name="maintaining"]').prop('checked')) {
+        if (square <= 40 ) {
+            return 1650;
+        }
+        if (square <= 50 ) {
+            return 1890;
+        }
+        if (square <= 60 ) {
+            return 2130;
+        }
+        if (square <= 70 ) {
+            return 2370;
+        }
+        if (square <= 80 ) {
+            return 2610;
+        }
+        if (square <= 90 ) {
+            return 2850;
+        }
+        if (square <= 100 ) {
+            return 3090;
+        }
+        if (square > 100 ) {
+            return 3090 + (square - 100)*24;
+        }
     } else {
-        extra_info = true;
-        get_extra_services();
-        total = PRICES['room'][rooms] + PRICES['closet'] * (closets - 1) + extra_services_sum;
-        $(".total .variable").text(total);
-        $(".total .variable, .total .currency").removeClass('hidden');
+        if (square <= 40 ) {
+            return 3100;
+        }
+        if (square <= 50 ) {
+            return 3900;
+        }
+        if (square <= 60 ) {
+            return 4000;
+        }
+        if (square <= 70 ) {
+            return 4400;
+        }
+        if (square <= 80 ) {
+            return 4900;
+        }
+        if (square <= 90 ) {
+            return 5400;
+        }
+        if (square <= 100 ) {
+            return 5800;
+        }
+        if (square > 100 ) {
+            return 5800 + (square - 100)*30;
+        }
     }
 }
 function get_extra_services() {
